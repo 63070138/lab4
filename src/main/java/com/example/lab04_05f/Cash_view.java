@@ -6,6 +6,8 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Route(value = "index2")
 public class Cash_view extends VerticalLayout {
@@ -31,18 +33,15 @@ public class Cash_view extends VerticalLayout {
         b1.setPrefixComponent(new Span("$1: "));
         this.add(ans, cal, b1000, b500, b100, b20, b10, b5, b1);
         cal.addClickListener(event -> {
-            Cashier c1 = new Cashier();
-            int a;
-            a = Integer.parseInt(ans.getValue());
-//            c1.getChange(Integer.parseInt(ans.getValue()));
-            b1000.setValue(c1.getChange(a).getB1000() + "");
-            b500.setValue(c1.getChange(a).getB500() + "");
-            b100.setValue(c1.getChange(a).getB100() + "");
-            b20.setValue(c1.getChange(a).getB20() + "");
-            b10.setValue(c1.getChange(a).getB10() + "");
-            b5.setValue(c1.getChange(a).getB5() + "");
-            b1.setValue(c1.getChange(a).getB1() + "");
-
+            String money = ans.getValue();
+            Change change = WebClient.create().get().uri("http://localhost:8080/getChange/"+money).retrieve().bodyToMono(Change.class).block();
+            b1000.setValue(change.getB1000()+"");
+            b500.setValue(change.getB500()+"");
+            b100.setValue(change.getB100()+"");
+            b20.setValue(change.getB20()+"");
+            b10.setValue(change.getB10()+"");
+            b5.setValue(change.getB5()+"");
+            b1.setValue(change.getB1()+"");
         });
     }
 }
