@@ -6,6 +6,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Route(value = "index")
 public class Cal_view extends VerticalLayout {
@@ -35,45 +40,52 @@ public class Cal_view extends VerticalLayout {
         this.add(nf1, nf2, h1, nf3);
 
         plus.addClickListener(event -> {
-            double ans;
-            double num1 = Double.parseDouble(nf1.getValue());
-            double num2 = Double.parseDouble(nf2.getValue());
-            nf3.setValue(c.myPlus(num1, num2)+ "");
+            String ans;
+            String num1 = String.valueOf(nf1.getValue());
+            String num2 = String.valueOf(nf2.getValue());
+            ans = String.valueOf(WebClient.create().get().uri("http://localhost:8080/plus/"+num1+"/"+num2).retrieve().bodyToMono(String.class).block());
+            nf3.setValue(ans);
         });
 
         minus.addClickListener(event -> {
-            double ans;
-            double num1 = Double.parseDouble(nf1.getValue());
-            double num2 = Double.parseDouble(nf2.getValue());
-            nf3.setValue(c.myMinus(num1, num2)+ "");
+            String ans;
+            String num1 = String.valueOf(nf1.getValue());
+            String num2 = String.valueOf(nf2.getValue());
+            ans = String.valueOf(WebClient.create().get().uri("http://localhost:8080/minus/"+num1+"/"+num2).retrieve().bodyToMono(String.class).block());
+            nf3.setValue(ans);
         });
 
         multiply.addClickListener(event -> {
-            double ans;
-            double num1 = Double.parseDouble(nf1.getValue());
-            double num2 = Double.parseDouble(nf2.getValue());
-            nf3.setValue(c.myMulti(num1, num2)+ "");
+            String ans;
+            String num1 = String.valueOf(nf1.getValue());
+            String num2 = String.valueOf(nf2.getValue());
+            ans = String.valueOf(WebClient.create().get().uri("http://localhost:8080/multi/"+num1+"/"+num2).retrieve().bodyToMono(String.class).block());
+            nf3.setValue(ans);
         });
 
         divide.addClickListener(event -> {
-            double ans;
-            double num1 = Double.parseDouble(nf1.getValue());
-            double num2 = Double.parseDouble(nf2.getValue());
-            nf3.setValue(c.myDivide(num1, num2)+ "");
+            String ans;
+            String num1 = String.valueOf(nf1.getValue());
+            String num2 = String.valueOf(nf2.getValue());
+            ans = String.valueOf(WebClient.create().get().uri("http://localhost:8080/divide/"+num1+"/"+num2).retrieve().bodyToMono(String.class).block());
+            nf3.setValue(ans);
         });
 
         mod.addClickListener(event -> {
-            double ans;
-            double num1 = Double.parseDouble(nf1.getValue());
-            double num2 = Double.parseDouble(nf2.getValue());
-            nf3.setValue(c.myMod(num1, num2)+ "");
+            String ans;
+            String num1 = String.valueOf(nf1.getValue());
+            String num2 = String.valueOf(nf2.getValue());
+            ans = String.valueOf(WebClient.create().get().uri("http://localhost:8080/mod/"+num1+"/"+num2).retrieve().bodyToMono(String.class).block());
+            nf3.setValue(ans);
         });
 
         max.addClickListener(event -> {
-            double ans;
-            double num1 = Double.parseDouble(nf1.getValue());
-            double num2 = Double.parseDouble(nf2.getValue());
-            nf3.setValue(c.myMax(num1, num2)+ "");
+            String ans;
+            MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+            formData.add("num1", nf1.getValue());
+            formData.add("num2", nf2.getValue());
+            ans = String.valueOf(WebClient.create().post().uri("http://localhost:8080/max").contentType(MediaType.APPLICATION_FORM_URLENCODED).body(BodyInserters.fromFormData(formData)).retrieve().bodyToMono(String.class).block());
+            nf3.setValue(ans);
         });
     }
 }
